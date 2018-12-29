@@ -13,19 +13,25 @@ import re
 
 import spotipy
 import spotipy.client
-from spotipy.oauth2 import SpotifyClientCredentials
 
-client_credentials_sp = None
+client_id = ''
+client_secret = ''
+redirect_uri = ''
+
+scope = 'playlist-modify-public playlist-modify-private playlist-read-collaborative'
+
+spotInstance = None
 
 def init_client_credentials_sp():
 
-    global client_credentials_sp
-    if client_credentials_sp is None:
-        client_credentials_manager = SpotifyClientCredentials()
-        client_credentials_sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-        client_credentials_sp.trace = False
+    username = "elganzua124"
+    global spotInstance
+    if spotInstance is None:
+        token = spotipy.util.prompt_for_user_token(username, scope,client_id, client_secret, redirect_uri)
+        spotInstance = spotipy.Spotify(auth=token)
+        spotInstance.trace = False
 
-    return client_credentials_sp
+    return spotInstance
 
 def get_album(albumURI):
     sp = init_client_credentials_sp()

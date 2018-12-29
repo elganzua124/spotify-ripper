@@ -167,16 +167,15 @@ def change_file_extension(file_name, ext):
 
 def format_track_string(ripper, format_string, idx, track):
     args = get_args()
-    current_album = ripper.current_album
     current_playlist = ripper.current_playlist
+    current_album = track.album
 
     # this fixes the track.disc
     if not track.is_loaded:
         track.load(args.timeout)
     if not track.album.is_loaded:
         track.album.load(args.timeout)
-    if current_album is None:
-        current_album = track.album
+
     album_browser = track.album.browse()
     album_browser.load(args.timeout)
 
@@ -224,11 +223,15 @@ def format_track_string(ripper, format_string, idx, track):
     else:
         smart_num = track_num
 
-    if current_playlist is not None:
+    if current_playlist is not None: #revisar
         playlist_name = to_ascii(
             sanitize_playlist_name(current_playlist.name))
-        playlist_owner = to_ascii(
-            current_playlist.owner.display_name)
+        #print(current_playlist.owner_display_name())
+        #playlist_owner = to_ascii(
+            #current_playlist.owner.display_name)
+            # current_playlist.owner_display_name()) revisar
+
+        playlist_owner = to_ascii("lala")
     else:
         playlist_name = "No Playlist"
         playlist_owner = "No Playlist Owner"
@@ -303,7 +306,7 @@ def format_track_string(ripper, format_string, idx, track):
     prefix_tags = {"feat_artists", "featuring_artists"}
     paren_tags = {"track_name", "track"}
     for tag in tags.keys():
-        format_string = format_string.replace("{" + tag + "}", tags[tag])
+        format_string = format_string.replace("{" + tag + "}", str(tags[tag])) # revisar
         if tag in fill_tags:
             match = re.search(r"\{" + tag + r":\d+\}", format_string)
             if match:

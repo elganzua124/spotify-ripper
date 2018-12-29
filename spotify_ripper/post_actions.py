@@ -9,7 +9,7 @@ import time
 import spotify
 import codecs
 import shutil
-from spotify_ripper.remove_all_from_playlist import remove_all_from_playlist
+from spotify_ripper.playlist import Playlist
 
 
 class PostActions(object):
@@ -153,13 +153,11 @@ class PostActions(object):
                 ("Top" if chart["metrics"] == "regional" else "Viral") + " " +
                 ("200" if chart["metrics"] == "regional" else "50"))
 
-    def get_playlist_name(self):
+    def get_playlist_name(self): # revisar, va contra la idea de que playlist. un album y chart tambien lo pueden ser?
         ripper = self.ripper
 
         if ripper.current_playlist is not None:
             return ripper.current_playlist.name
-        elif ripper.current_album is not None:
-            return (ripper.current_album.artist.name + " - " + ripper.current_album.name)
         elif ripper.current_chart is not None:
             return self.get_chart_name(ripper.current_chart)
         else:
@@ -170,6 +168,7 @@ class PostActions(object):
         ripper = self.ripper
 
         name = self.get_playlist_name()
+        
         if name is not None and args.playlist_m3u:
             name = sanitize_playlist_name(to_ascii(name))
             _base_dir = base_dir()
@@ -260,33 +259,41 @@ class PostActions(object):
             if self.args.plus_pcm:
                 delete_extra_file("pcm")
 
-    def queue_remove_from_playlist(self, idx): #depreciated
+    def queue_remove_from_playlist(self, idx):
         ripper = self.ripper
 
         if self.args.remove_from_playlist:
             if ripper.current_playlist:
-                if ripper.current_playlist.owner.canonical_name == \
-                        ripper.session.user.canonical_name:
-                        #modified to use webAPI
-                        #self.tracks_to_remove.append(idx)
-                        # remove_all_from_playlist(ripper.session.user.canonical_name, ripper.current_playlist.link.uri)
-                        print("Emptying Playlist")
+                if ripper.current_playlist.can_remove_tracks():
+                        print("son iguales")
+                        print(idx)
+                        self.tracks_to_remove.append(idx)
+                        print("Emptying Playlisto")
                 else:
                     print(Fore.RED +
                           "This track will not be removed from playlist " +
                           ripper.current_playlist.name + " since " +
-                          ripper.session.user.canonical_name +
-                          " is not the playlist owner..." + Fore.RESET)
+                          ripper.session.user.canonical_name() +
+                          " is not the playlist owner or this is an album (static playlist)..." + Fore.RESET)
             else:
                 print(Fore.RED +
                       "No playlist specified to remove this track from. " +
                       "Did you use '-r' without a playlist link?" + Fore.RESET)
 
+
     def remove_tracks_from_playlist(self):
-        if self.args.remove_from_playlist:
-            ripper = self.ripper
-            remove_all_from_playlist(ripper.session.user.canonical_name, ripper.playlist_uri)
-            print("Playlist Emptied!")
+        ripper = self.ripper
+
+        if self.args.remove_from_playlist and \
+                ripper.current_playlist and len(self.tracks_to_remove) > 0:
+            print(Fore.YELLOW +
+                  "Removing successfully ripped tracks from playlist " +
+                  ripper.current_playlist.name() + "..." + Fore.RESET)
+
+            ripper.current_playlist.remove_tracks(self.tracks_to_remove)
+
+            #while ripper.current_playlist.has_pending_changes:
+            #    time.sleep(0.1)
 
     def remove_offline_cache(self):
         ripper = self.ripper

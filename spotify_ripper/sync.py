@@ -21,9 +21,11 @@ class Sync(object):
         args = self.args
 
         # get playlist_id
-        uri_tokens = playlist.link.uri.split(':')
+
+        uri_tokens = playlist.uri.split(':')
         if len(uri_tokens) != 5:
-            return None
+            #return None
+            pass
 
         # lib path
         if args.settings is not None:
@@ -34,7 +36,8 @@ class Sync(object):
         if not path_exists(lib_path):
             os.makedirs(enc_str(lib_path))
 
-        return os.path.join(lib_path, uri_tokens[4] + ".json")
+        #return os.path.join(lib_path, uri_tokens[4] + ".json")
+        return os.path.join(lib_path, uri_tokens[-1] + ".json")
 
     def save_sync_library(self, playlist, lib):
         args = self.args
@@ -59,23 +62,22 @@ class Sync(object):
 
     def sync_playlist(self, playlist):
         args = self.args
-        playlist.load(args.timeout)
+        #playlist.load(args.timeout)
         lib = self.load_sync_library(playlist)
         new_lib = {}
 
         print("Syncing playlist " + to_ascii(playlist.name))
 
+        # TODO, que funcione con:
+        # tracks = list(self.ripper.playlist.get_playlist_tracks())
+        tracks = list(self.ripper.get_tracks_from_uri(playlist.uri))
+
         # create new lib
-        for idx, track in enumerate(playlist.tracks):
-            try:
-                track.load(args.timeout)
-                if track.availability != 1 or track.is_local:
-                    continue
+        #for idx, track in enumerate(playlist.tracks):
+        for idx, track in enumerate(tracks):
 
-                audio_file = self.ripper.format_track_path(idx, track)
-                new_lib[track.link.uri] = audio_file
-
-            except spotify.Error as e:
+            # ignore local tracks
+            if track.is_local:
                 continue
 
         # check what items are missing or renamed in the new_lib vs lib
