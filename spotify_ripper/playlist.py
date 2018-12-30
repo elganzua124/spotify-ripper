@@ -66,7 +66,7 @@ class Current_playlist(Playlist): # cambiar nombre, Mixed_playlist tal vez?
         return self._Playlist__sp.playlist(self.id)
 
     def owner_display_name(self):
-        super().owner_display_name()
+        return Playlist.owner_display_name(self)
 
     def _Playlist__get_tracks(self):
         print('Getting Results')
@@ -92,15 +92,8 @@ class Current_playlist(Playlist): # cambiar nombre, Mixed_playlist tal vez?
             return True
         return False
 
-    def remove_tracks(self,tracks_to_remove): #testear
-        tracks = self.get_playlist_tracks()
-        tracks_to_remove_ids = []
-        for i, item in enumerate(tracks):
-            if i in tracks_to_remove:
-                track = item['track']
-                tid = track['id']
-                tracks_to_remove_ids.append(tid)
-        results = self._Playlist__sp.user_playlist_remove_all_occurrences_of_tracks(self.id, tracks_to_remove_ids)
+    def remove_tracks(self,track_ids): #testear
+        results = self._Playlist__sp.user_playlist_remove_all_occurrences_of_tracks(self.id, track_ids)
 
 
 class Album(Playlist): # an_album_playlist

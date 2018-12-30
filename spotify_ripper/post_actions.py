@@ -153,7 +153,7 @@ class PostActions(object):
                 ("Top" if chart["metrics"] == "regional" else "Viral") + " " +
                 ("200" if chart["metrics"] == "regional" else "50"))
 
-    def get_playlist_name(self): # revisar, va contra la idea de que playlist. un album y chart tambien lo pueden ser?
+    def get_playlist_name(self): # eliminar, pero primero agregar charts a playlist
         ripper = self.ripper
 
         if ripper.current_playlist is not None:
@@ -167,7 +167,7 @@ class PostActions(object):
         args = self.args
         ripper = self.ripper
 
-        name = self.get_playlist_name()
+        name = self.get_playlist_name() # future: name = self.current_playlist.name_for_m3u()
         
         if name is not None and args.playlist_m3u:
             name = sanitize_playlist_name(to_ascii(name))
@@ -259,21 +259,21 @@ class PostActions(object):
             if self.args.plus_pcm:
                 delete_extra_file("pcm")
 
-    def queue_remove_from_playlist(self, idx):
+    def queue_remove_from_playlist(self, track_uri):
         ripper = self.ripper
 
         if self.args.remove_from_playlist:
             if ripper.current_playlist:
                 if ripper.current_playlist.can_remove_tracks():
                         print("son iguales")
-                        print(idx)
-                        self.tracks_to_remove.append(idx)
+                        track_id = track_uri.split(':')[-1]
+                        self.tracks_to_remove.append(track_id)
                         print("Emptying Playlisto")
                 else:
                     print(Fore.RED +
                           "This track will not be removed from playlist " +
                           ripper.current_playlist.name + " since " +
-                          ripper.session.user.canonical_name() +
+                          ripper.session.user.canonical_name +
                           " is not the playlist owner or this is an album (static playlist)..." + Fore.RESET)
             else:
                 print(Fore.RED +
@@ -288,7 +288,7 @@ class PostActions(object):
                 ripper.current_playlist and len(self.tracks_to_remove) > 0:
             print(Fore.YELLOW +
                   "Removing successfully ripped tracks from playlist " +
-                  ripper.current_playlist.name() + "..." + Fore.RESET)
+                  ripper.current_playlist.name + "..." + Fore.RESET)
 
             ripper.current_playlist.remove_tracks(self.tracks_to_remove)
 

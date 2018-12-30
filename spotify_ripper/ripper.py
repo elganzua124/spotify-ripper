@@ -46,8 +46,6 @@ class BitRate(spotify.utils.IntEnum):
 class Ripper(threading.Thread):
     name = 'SpotifyRipperThread'
 
-    token = None
-    spotInstance = None
     audio_file = None
     pcm_file = None
     wav_file = None
@@ -296,7 +294,7 @@ class Ripper(threading.Thread):
                                 Fore.YELLOW + "Skipping " +
                                 track.link.uri + Fore.RESET)
                             print(Fore.CYAN + self.audio_file + Fore.RESET)
-                            self.post.queue_remove_from_playlist(idx)
+                            self.post.queue_remove_from_playlist(track.link.uri)
                             self.progress.track_idx += 1
                             continue
 
