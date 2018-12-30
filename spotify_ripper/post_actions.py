@@ -87,11 +87,13 @@ class PostActions(object):
                   ")\n" + ("-" * 79) + Fore.RESET)
             log_tracks(self.failure_tracks)
 
-    def create_playlist_m3u(self, tracks):
+    def create_playlist_m3u(self, tracks): # TODO: que sea metodo de playlist
         args = self.args
         ripper = self.ripper
 
-        name = self.current_playlist.name
+        if ripper.current_playlist is None: # uri must be from a track
+            return
+        name = ripper.current_playlist.name
         
         if name is not None and args.playlist_m3u:
             name = sanitize_playlist_name(to_ascii(name))
@@ -113,10 +115,12 @@ class PostActions(object):
                         playlist.write(os.path.relpath(_file, _base_dir) +
                                        "\n")
 
-    def create_playlist_wpl(self, tracks):
+    def create_playlist_wpl(self, tracks): # TODO: que sea metodo de playlist
         args = self.args
         ripper = self.ripper
 
+        if ripper.current_playlist is None: # uri must be from a track
+            return
         name = self.get_playlist_name()
         if name is not None and args.playlist_wpl:
             name = sanitize_playlist_name(to_ascii(name))

@@ -10,8 +10,6 @@ from itertools import islice
 import csv
 import re
 
-from spotify_ripper.web import WebAPI
-
 client_id = ''
 client_secret = ''
 redirect_uri = 'http://www.purple.com'
