@@ -87,87 +87,11 @@ class PostActions(object):
                   ")\n" + ("-" * 79) + Fore.RESET)
             log_tracks(self.failure_tracks)
 
-    def get_chart_name(self, chart):
-        region_mapping = {
-            "global": "Global",
-            "us": "United States",
-            "gb": "United Kingdom",
-            "ad": "Andorra",
-            "ar": "Argentina",
-            "at": "Austria",
-            "au": "Australia",
-            "be": "Belgium",
-            "bg": "Bulgaria",
-            "bo": "Bolivia",
-            "br": "Brazil",
-            "ca": "Canada",
-            "ch": "Switzerland",
-            "cl": "Chile",
-            "co": "Colombia",
-            "cr": "Costa Rica",
-            "cy": "Cyprus",
-            "cz": "Czech Republic",
-            "de": "Germany",
-            "dk": "Denmark",
-            "do": "Dominican Republic",
-            "ec": "Ecuador",
-            "ee": "Estonia",
-            "es": "Spain",
-            "fi": "Finland",
-            "fr": "France",
-            "gr": "Greece",
-            "gt": "Guatemala",
-            "hk": "Hong Kong",
-            "hn": "Honduras",
-            "hu": "Hungary",
-            "id": "Indonesia",
-            "ie": "Ireland",
-            "is": "Iceland",
-            "it": "Italy",
-            "lt": "Lithuania",
-            "lu": "Luxembourg",
-            "lv": "Latvia",
-            "mt": "Malta",
-            "mx": "Mexico",
-            "my": "Malaysia",
-            "ni": "Nicaragua",
-            "nl": "Netherlands",
-            "no": "Norway",
-            "nz": "New Zealand",
-            "pa": "Panama",
-            "pe": "Peru",
-            "ph": "Philippines",
-            "pl": "Poland",
-            "pt": "Portugal",
-            "py": "Paraguay",
-            "se": "Sweden",
-            "sg": "Singapore",
-            "sk": "Slovakia",
-            "sv": "El Salvador",
-            "tr": "Turkey",
-            "tw": "Taiwan",
-            "uy": "Uruguay"
-        }
-        return (chart["time_window"].title() + " " +
-                region_mapping.get(chart["region"], "") + " " +
-                ("Top" if chart["metrics"] == "regional" else "Viral") + " " +
-                ("200" if chart["metrics"] == "regional" else "50"))
-
-    def get_playlist_name(self): # eliminar, pero primero agregar charts a playlist
-        ripper = self.ripper
-
-        if ripper.current_playlist is not None:
-            return ripper.current_playlist.name
-        elif ripper.current_chart is not None:
-            return self.get_chart_name(ripper.current_chart)
-        else:
-            return None
-
     def create_playlist_m3u(self, tracks):
         args = self.args
         ripper = self.ripper
 
-        name = self.get_playlist_name() # future: name = self.current_playlist.name_for_m3u()
+        name = self.current_playlist.name
         
         if name is not None and args.playlist_m3u:
             name = sanitize_playlist_name(to_ascii(name))
@@ -265,16 +189,14 @@ class PostActions(object):
         if self.args.remove_from_playlist:
             if ripper.current_playlist:
                 if ripper.current_playlist.can_remove_tracks():
-                        print("son iguales")
                         track_id = track_uri.split(':')[-1]
                         self.tracks_to_remove.append(track_id)
-                        print("Emptying Playlisto")
+                        print("Emptying Playlist")
                 else:
                     print(Fore.RED +
                           "This track will not be removed from playlist " +
-                          ripper.current_playlist.name + " since " +
-                          ripper.session.user.canonical_name +
-                          " is not the playlist owner or this is an album (static playlist)..." + Fore.RESET)
+                          ripper.current_playlist.name + " since this is not a playlist owned by " +
+                          ripper.session.user.canonical_name + Fore.RESET)
             else:
                 print(Fore.RED +
                       "No playlist specified to remove this track from. " +

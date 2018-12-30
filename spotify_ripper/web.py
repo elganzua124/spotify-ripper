@@ -8,9 +8,6 @@ import os
 import time
 import spotify
 import requests
-import csv
-import re
-from itertools import islice
 import spotipy
 import spotipy.client
 
@@ -187,90 +184,6 @@ class WebAPI(object):
         result = json_obj["genres"]
         self.cache_result("genres", uri, result)
         return result
-
-    # doesn't seem to be officially supported by Spotify
-    def get_charts(self, uri):
-        def get_chart_tracks(metrics, region, time_window, from_date):
-            url = self.charts_url(metrics + "/" + region + "/" + time_window +
-                "/" + from_date + "/download")
-
-            res = self.request_url(url, region + " " + metrics + " charts")
-            if res is not None:
-                csv_items = [to_ascii(r) for r in res.text.split("\n")] # enc_str(to_ascii(r)) doesn't work for me (python 3)
-
-                #some charts starts with "Note that these figures are generated using a formula..."
-                if not csv_items[0].startswith('Position'):
-                    csv_items = islice(csv_items, 1,None) # so we skip one line
-                reader = csv.DictReader(csv_items)
-                return ["spotify:track:" + row["URL"].split("/")[-1]
-                            for row in reader]
-            else:
-                return []
-
-        # check for cached result
-        cached_result = self.get_cached_result("charts", uri)
-        if cached_result is not None:
-            return cached_result
-
-        # spotify:charts:metric:region:time_window:date
-        uri_tokens = uri.split(':')
-        if len(uri_tokens) != 6:
-            return None
-
-        # some sanity checking
-        valid_metrics = {"regional", "viral"}
-        valid_regions = {"us", "gb", "ad", "ar", "at", "au", "be", "bg", "bo",
-                         "br", "ca", "ch", "cl", "co", "cr", "cy", "cz", "de",
-                         "dk", "do", "ec", "ee", "es", "fi", "fr", "gr", "gt",
-                         "hk", "hn", "hu", "id", "ie", "is", "it", "lt", "lu",
-                         "lv", "mt", "mx", "my", "ni", "nl", "no", "nz", "pa",
-                         "pe", "ph", "pl", "pt", "py", "se", "sg", "sk", "sv",
-                         "tr", "tw", "uy", "global"}
-        valid_windows = {"daily", "weekly"}
-
-        def sanity_check(val, valid_set):
-            if val not in valid_set:
-                print(Fore.YELLOW +
-                      "Not a valid Spotify charts URI parameter: " +
-                      val + Fore.RESET)
-                print("Valid parameter options are: [" +
-                      ", ".join(valid_set)) + "]"
-                return False
-            return True
-
-        def sanity_check_date(val):
-            if  re.match(r"^\d{4}-\d{2}-\d{2}$", val) is None and \
-                    val != "latest":
-                print(Fore.YELLOW +
-                      "Not a valid Spotify charts URI parameter: " +
-                      val + Fore.RESET)
-                print("Valid parameter options are: ['latest', a date "
-                      "(e.g. 2016-01-21)]")
-                return False
-            return True
-
-        check_results = sanity_check(uri_tokens[2], valid_metrics) and \
-            sanity_check(uri_tokens[3], valid_regions) and \
-            sanity_check(uri_tokens[4], valid_windows) and \
-            sanity_check_date(uri_tokens[5])
-        if not check_results:
-            print("Generally, a charts URI follow the pattern "
-                  "spotify:charts:metric:region:time_window:date")
-            return None
-
-        tracks_obj = get_chart_tracks(uri_tokens[2], uri_tokens[3],
-                                      uri_tokens[4], uri_tokens[5])
-        charts_obj = {
-            "metrics": uri_tokens[2],
-            "region": uri_tokens[3],
-            "time_window": uri_tokens[4],
-            "from_date": uri_tokens[5],
-            "tracks": tracks_obj
-        }
-
-        self.cache_result("charts", uri, charts_obj)
-        return charts_obj
-
 
     def get_large_coverart(self, uri):
         def get_track_json(track_id):

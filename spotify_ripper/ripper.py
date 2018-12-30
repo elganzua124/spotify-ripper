@@ -52,7 +52,6 @@ class Ripper(threading.Thread):
     rip_proc = None
     pipe = None
     current_playlist = None
-    current_chart = None
 
     login_success = False
     progress = None
@@ -182,13 +181,12 @@ class Ripper(threading.Thread):
 
         return self.login_success
 
-#devuelve lista de objetos tracks
+    #devuelve lista de objetos tracks
 
-    # TODO: agregar artist y charts a la logica de playlist
+    # TODO: agregar artist a la logica de playlist
     def get_tracks_from_uri(self, uri):
         args = self.args
         self.current_playlist = None
-        self.current_chart = None
 
         if isinstance(uri, list):
             return uri
@@ -201,17 +199,7 @@ class Ripper(threading.Thread):
                 return itertools.chain(
                     *[self.load_link(album_uri) for
                        album_uri in album_uris])
-            elif uri.startswith("spotify:charts:"):
-                charts = self.web.get_charts(uri)
-                if charts is not None:
-                    self.current_chart = charts
-                    chart_uris = charts["tracks"]
-                    return itertools.chain(
-                        *[self.load_link(chart_uri) for
-                          chart_uri in chart_uris])
-                else:
-                    return iter([])
-            else: # aca entran los playlists, albums, es decir que si no entra aca, current_playlist queda en None
+            else: # aca entran los playlists, es decir que si no entra aca, current_playlist queda en None
                     return self.load_link(uri)
 
     def run(self):
@@ -430,6 +418,12 @@ class Ripper(threading.Thread):
         # ignore if the uri is just blank (e.g. from a file)
         if not uri:
             return iter([])
+        
+        if uri.startswith("spotify:charts:"):
+            self.current_playlist = Chart_playlist(self.session,uri)
+            print('get chart tracks')
+            return iter(self.current_playlist.tracks)
+
         args = self.args
         link = self.session.get_link(uri)
 
@@ -444,31 +438,7 @@ class Ripper(threading.Thread):
             self.current_playlist = Album(self.session,uri)
             print('get album tracks')
             return iter(self.current_playlist.tracks)
-        elif link.type == spotify.LinkType.STARRED: #a_starred_playlist
-            link_user = link.as_user()
-            def load_starred():
-                if link_user is not None:
-                    return self.session.get_starred(link_user.canonical_name)
-                else:
-                    return self.session.get_starred()
-            starred = load_starred()
-            attempt_count = 1
-            while starred is None:
-                if attempt_count > 3:
-                    print(Fore.RED + "Could not load starred playlist..." +
-                          Fore.RESET)
-                    return iter([])
-                print("Attempt " + str(attempt_count) + " failed: Spotify " +
-                      "returned None for starred playlist, trying again in " +
-                      "5 seconds...")
-                time.sleep(5.0)
-                starred = load_starred()
-                attempt_count += 1
-            print('Loading starred playlist...')
-            starred.load(args.timeout)
-            return iter(starred.tracks)
         elif link.type == spotify.LinkType.ARTIST:
-            print("wachooooooooOOOO")
             artist = link.as_artist()
             artist_browser = artist.browse()
             print('Loading artist browser...')
