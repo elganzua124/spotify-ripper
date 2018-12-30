@@ -10,7 +10,7 @@ import spotify
 import requests
 import csv
 import re
-
+from itertools import islice
 import spotipy
 import spotipy.client
 
@@ -196,7 +196,11 @@ class WebAPI(object):
 
             res = self.request_url(url, region + " " + metrics + " charts")
             if res is not None:
-                csv_items = [enc_str(to_ascii(r)) for r in res.text.split("\n")]
+                csv_items = [to_ascii(r) for r in res.text.split("\n")] # enc_str(to_ascii(r)) doesn't work for me (python 3)
+
+                #some charts starts with "Note that these figures are generated using a formula..."
+                if not csv_items[0].startswith('Position'):
+                    csv_items = islice(csv_items, 1,None) # so we skip one line
                 reader = csv.DictReader(csv_items)
                 return ["spotify:track:" + row["URL"].split("/")[-1]
                             for row in reader]
