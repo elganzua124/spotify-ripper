@@ -121,7 +121,7 @@ class PostActions(object):
 
         if ripper.current_playlist is None: # uri must be from a track
             return
-        name = self.get_playlist_name()
+        name = ripper.current_playlist.name
         if name is not None and args.playlist_wpl:
             name = sanitize_playlist_name(to_ascii(name))
             _base_dir = base_dir()
