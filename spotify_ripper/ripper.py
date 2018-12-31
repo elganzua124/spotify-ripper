@@ -287,7 +287,7 @@ class Ripper(threading.Thread):
                             continue
 
                     self.session.player.load(track)
-                    self.prepare_rip(idx, track)
+                    self.prepare_rip(track)
                     self.session.player.play()
 
                     timeout_count = 0
@@ -339,7 +339,7 @@ class Ripper(threading.Thread):
 
                     # make a note of the index and remove all the
                     # tracks from the playlist when everything is done
-                    self.post.queue_remove_from_playlist(idx)
+                    self.post.queue_remove_from_playlist(track.link.uri)
 
                     # finally log success
                     self.post.log_success(track)
@@ -637,7 +637,7 @@ class Ripper(threading.Thread):
             filename = re.sub(repl[0], repl[1], filename)
         return filename
 
-    def prepare_rip(self, idx, track):
+    def prepare_rip(self, track):
         args = self.args
 
         # reset progress
