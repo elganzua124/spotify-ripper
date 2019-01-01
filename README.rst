@@ -361,7 +361,8 @@ A couple notes about Spotify's WebAPI token authentication:
 
 - If you are running this in a script or other form of automation, you'll have to manually authenticate once but after that as long as you always execute it from the same location you won't have to authenticate again.
 
-- THIS IS IMPORTANT: If you first run this program with sudo, later when you run the program as unprivileged user you will receive segmentation faults with no information. You need to delete the folder .spotify-ripper in the home directory and run the program as unprivileged user.
+THIS IS IMPORTANT:
+If you first run this program with sudo, later when you run the program as unprivileged user, you will receive segmentation faults with no information. You will need to delete the folder .spotify-ripper in the home directory and run the program as unprivileged user.
 
 Installation
 ------------
