@@ -44,8 +44,11 @@ setup(
         'colorama==0.3.3',
         'mutagen==1.30',
         'requests>=2.3.0',
-        'schedule>=0.3.1',
-        'spotipy==2.4.4'
+        'schedule>=0.3.1'
+    ],
+    
+    dependency_links=[
+        "git+https://github.com/elganzua124/spotipy"
     ],
 
     # Metadata
