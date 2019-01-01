@@ -9,7 +9,7 @@ A fork of
                 make sure you export the web api credentials in your unix shell
                 export SPOTIPY_CLIENT_ID='77aa1aa93dc0416397f22a7a9b4a815b'
                 export SPOTIPY_CLIENT_SECRET='0d79181c57ee412aaa770af257edf07a'
-                export SPOTIPY_REDIRECT_URI='http://www.purple.com'
+                export SPOTIPY_REDIRECT_URI='http://localhost:1025'
 
 Spotify-ripper is a small ripper script for Spotify that rips Spotify
 URIs to audio files and includes ID3 tags and cover art.  By default spotify-ripper will encode to MP3 files, but includes the ability to rip to WAV, FLAC, Ogg Vorbis, Opus, AAC, and MP4/M4A.
@@ -340,17 +340,17 @@ Make an application at https://developer.spotify.com/my-applications/ name it wh
 
 2: Generate and store you client_id and client_secret, you'll need these later
 
-3: Add http://www.purple.com to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. I am not affiliated with www.purple.com, I just like what they do. If you want to use a different URI, ensure it doesn't use https and change the redirect_uri in remove_all_from_playlist.py
+3: Add http://localhost:1025 to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. If you want to use a different port, ensure it's higher than 1024 and put that number in the variable localhost_port in playlist.py
    
 4: Press the "SAVE" button at the bottom of the page
 
 5: Install this package if you haven't already and navigate to it in the python version you installed it with (I would  suggest Python 3 at least) For example, my installation directory is "/usr/local/lib/python3.4/dist-packages/spotify_ripper/"
    
-6: open remove_all_from_playlist.py in your favorite text editor. Add your client_id and client_secret between the single quotes next to the variables named the same thing
+6: open playlist.py in your favorite text editor. Add your client_id and client_secret between the single quotes next to the variables named the same thing
 
 7: If you have been using spotify-ripper for a while, it probably doesn't have accurate cache data on your playlists anymore. Find your ".spotify-ripper" folder, most likely in your home directory, and delete your "Users" folder. It will be regenerated on the next run.
 
-8: Finally, run spotify-ripper with the --remove-from-playlist command. When prompted, open the link it says it's opening for you in a web browser. Log into spotify, give it permission, and the copy the entire url it redirects to. If you're using the default redirect_url, it should be in the form "http://www.purple.com/?code=XXXXXXXXXXXX....." Ensure you haven't typed any other characters into where it asks for the URL you were redirected to, paste the URL and press enter. For some reason, when run through SSH you won't see anything you type or paste into this field.
+8: (Modificar) Finally, run spotify-ripper with the --remove-from-playlist command. When prompted, open the link it says it's opening for you in a web browser. Log into spotify, give it permission, and the copy the entire url it redirects to. If you're using the default redirect_url, it should be in the form "http://www.purple.com/?code=XXXXXXXXXXXX....." Ensure you haven't typed any other characters into where it asks for the URL you were redirected to, paste the URL and press enter. For some reason, when run through SSH you won't see anything you type or paste into this field.
 
 If you followed all of these steps correctly, spotify-ripper will completely empty the playlist you are ripping from when it finishes.
 
@@ -361,7 +361,7 @@ A couple notes about Spotify's WebAPI token authentication:
 
 - If you are running this in a script or other form of automation, you'll have to manually authenticate once but after that as long as you always execute it from the same location you won't have to authenticate again.
 
-- Depending on your browser, it may redirect quickly after going to http://www.purple.com?code=XXXXXXXXXX....  you have to be quick to copy the url with the full code and paste it into your terminal otherwise you'll have to re run the program to generate a new token
+- THIS IS IMPORTANT: If you first run this program with sudo, later when you run the program as unprivileged user you will receive segmentation faults with no information. You need to delete the folder .spotify-ripper in the home directory and run the program as unprivileged user.
 
 Installation
 ------------
