@@ -13,7 +13,7 @@ import spotipy.client
 
 client_id = ''
 client_secret = ''
-redirect_uri = ''
+localhost_port = 1025
 
 scope = 'playlist-modify-public playlist-modify-private playlist-read-collaborative'
 
@@ -24,15 +24,11 @@ def init_client_credentials_sp():
     username = "elganzua124"
     global spotInstance
     if spotInstance is None:
-        token = spotipy.util.prompt_for_user_token(username, scope,client_id, client_secret, redirect_uri)
+        token = spotipy.util.prompt_for_user_token(username, scope,client_id, client_secret, localhost_port)
         spotInstance = spotipy.Spotify(auth=token)
         spotInstance.trace = False
 
     return spotInstance
-
-def get_album(albumURI):
-    sp = init_client_credentials_sp()
-    return sp.album(albumURI)
 
 class WebAPI(object):
 
@@ -219,4 +215,5 @@ class WebAPI(object):
                 return get_image_data(image["url"])
 
         return None
+
 

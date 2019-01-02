@@ -51,6 +51,7 @@ class Ripper(threading.Thread):
     wav_file = None
     rip_proc = None
     pipe = None
+    credentials = ['', ''] # put here your client_id, client_secret pair
     current_playlist = None
 
     login_success = False
@@ -212,7 +213,7 @@ class Ripper(threading.Thread):
         self.ripper_continue.wait()
         if self.abort.is_set():
             return
-        #set session to provate
+        #set session to private
         self.session.social.private_session = True
 
         # list of spotify URIs
@@ -794,3 +795,4 @@ class Ripper(threading.Thread):
     def abort_rip(self):
         self.ripping.clear()
         self.abort.set()
+

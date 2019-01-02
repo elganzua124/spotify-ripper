@@ -239,3 +239,4 @@ class Progress(object):
         self.eta_calc()
         self.update_progress(0, None)
         print_str("\n")
+

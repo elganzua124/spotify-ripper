@@ -99,3 +99,4 @@ class Sync(object):
 
         # save new lib
         self.save_sync_library(playlist, new_lib)
+

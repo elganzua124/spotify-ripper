@@ -101,6 +101,12 @@ def main(prog_args=sys.argv[1:]):
     # config file lives, we need to parse this argument before we parse
     # the rest of the arguments (which can overwrite the options in the
     # config file)
+
+    # to avoid unintended root execution
+    if os.getuid() == 0:
+        print("spotify-ripper: error: please run this program as unprivileged user")
+        sys.exit(1)
+
     settings_parser = argparse.ArgumentParser(add_help=False)
     settings_parser.add_argument(
         '-S', '--settings',

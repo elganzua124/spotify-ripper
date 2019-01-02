@@ -534,3 +534,4 @@ def set_metadata_tags(args, audio_file, idx, track, ripper):
     except id3.error:
         print(Fore.YELLOW + "Warning: exception while saving id3 tag: " +
               str(id3.error) + Fore.RESET)
+

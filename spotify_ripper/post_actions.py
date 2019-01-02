@@ -49,8 +49,8 @@ class PostActions(object):
             self.fail_log_file.close()
             self.fail_log_file = None
 
-            if os.path.getsize(enc_str(file_name)) == 0:
-                rm_file(file_name)
+            if os.path.getsize(to_ascii(file_name)) == 0:
+                rm_file(to_ascii(file_name))
 
     def print_summary(self):
         if len(self.success_tracks) + len(self.failure_tracks) <= 1:
@@ -60,7 +60,7 @@ class PostActions(object):
             if self.args.ascii:
                 print(" * " + _str)
             else:
-                print(" • " + _str)
+                print(" ? " + _str)
 
         def log_tracks(tracks):
             for track in tracks:
@@ -233,4 +233,5 @@ class PostActions(object):
             storage_path = os.path.join(storage_path, "Storage")
             if path_exists(storage_path):
                 shutil.rmtree(enc_str(storage_path))
+
 
