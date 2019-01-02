@@ -12,16 +12,13 @@ import re
 
 client_id = ''
 client_secret = ''
-localhost_port = 1025 #  You can't bind to port numbers lower than 1024 as a unprivileged user.
-
-scope = 'playlist-modify-public playlist-modify-private playlist-read-collaborative'
 
 # client_id = os.environ["SPOTIPY_CLIENT_ID"] 
 # client_secret = os.environ["SPOTIPY_CLIENT_SECRET"]
-# redirect_uri = os.environ["SPOTIPY_REDIRECT_URI"]
 
 
 import abc
+from spotipy.oauth2 import SpotifyClientCredentials
 
 class Playlist(abc.ABC): # Needs refactoring
 
@@ -32,8 +29,8 @@ class Playlist(abc.ABC): # Needs refactoring
         self.id = self.uri.split(':')[-1]
 
         def spotify_object():
-            token = util.prompt_for_user_token(self.username, scope,client_id, client_secret, localhost_port)
-            spotify_object = spotipy.Spotify(auth=token)
+            client_credentials_manager = SpotifyClientCredentials(client_id, client_secret)
+            spotify_object = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
             spotify_object.trace = False
             return spotify_object
 
@@ -279,7 +276,7 @@ class Chart_playlist(Playlist):
             if res is not None:
                 csv_items = [to_ascii(r) for r in res.text.split("\n")] # enc_str(to_ascii(r)) doesn't work for me (python 3)
 
-                # some charts starts with the "Note that these figures are generated using a formula..."
+                # some charts starts with the line "Note that these figures are generated using a formula..."
                 if not csv_items[0].startswith('Position'):
                     csv_items = islice(csv_items, 1, None) # so we skip that line
                 reader = csv.DictReader(csv_items)

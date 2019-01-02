@@ -60,7 +60,7 @@ class PostActions(object):
             if self.args.ascii:
                 print(" * " + _str)
             else:
-                print(" ? " + _str)
+                print(" • " + _str)
 
         def log_tracks(tracks):
             for track in tracks:

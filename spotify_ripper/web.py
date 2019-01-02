@@ -10,31 +10,24 @@ import spotify
 import requests
 import spotipy
 import spotipy.client
+from spotipy.oauth2 import SpotifyClientCredentials
 
-client_id = ''
-client_secret = ''
-localhost_port = 1025
+client_credentials_sp = None
 
-scope = 'playlist-modify-public playlist-modify-private playlist-read-collaborative'
+def init_client_credentials_sp(client_id, client_secret):
 
-spotInstance = None
+    global client_credentials_sp
+    if client_credentials_sp is None:
+        client_credentials_manager = SpotifyClientCredentials(client_id, client_secret)
+        client_credentials_sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+        client_credentials_sp.trace = False
 
-def init_client_credentials_sp():
-
-    username = "elganzua124"
-    global spotInstance
-    if spotInstance is None:
-        token = spotipy.util.prompt_for_user_token(username, scope,client_id, client_secret, localhost_port)
-        spotInstance = spotipy.Spotify(auth=token)
-        spotInstance.trace = False
-
-    return spotInstance
+    return client_credentials_sp
 
 class WebAPI(object):
 
-    def __init__(self, args, ripper):
+    def __init__(self, args, client_id, client_secret):
         self.args = args
-        self.ripper = ripper
         self.cache = {
             "albums_with_filter": {},
             "artists_on_album": {},
@@ -53,7 +46,7 @@ class WebAPI(object):
         print(Fore.GREEN + "Attempting to retrieve " + msg +
               " from Spotify's Web API" + Fore.RESET)
         print(Fore.CYAN + url + Fore.RESET)
-        sp = init_client_credentials_sp()
+        sp = init_client_credentials_sp(client_id, client_secret)
         try:
             res = sp._get(url)
         except spotify.SpotifyException as e:

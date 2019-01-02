@@ -91,7 +91,7 @@ class Ripper(threading.Thread):
         default_dir = default_settings_dir()
 
         self.post = PostActions(args, self)
-        self.web = WebAPI(args, self)
+        self.web = WebAPI(args, *self.credentials)
 
         proxy = os.environ.get('http_proxy')
         if proxy is not None:
@@ -196,6 +196,7 @@ class Ripper(threading.Thread):
                     (args.artist_album_type is not None or
                      args.artist_album_market is not None)):""" #revisar
             if (uri.startswith("spotify:artist:")):
+                print("acap")
                 album_uris = self.web.get_albums_with_filter(uri)
                 return itertools.chain(
                     *[self.load_link(album_uri) for
