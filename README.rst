@@ -347,9 +347,6 @@ In order to use the Spotify Web API, you must go through a few steps
 
 If you followed all of these steps correctly, spotify-ripper will completely empty the playlist you are ripping from when it finishes.
 
-THIS IS IMPORTANT:
-If you first run this program with sudo, later when you run the program as unprivileged user, you will receive segmentation faults with no information. You will need to delete the folder .spotify-ripper in the home directory and run the program as unprivileged user.
-
 Installation
 ------------
 
