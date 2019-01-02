@@ -1,7 +1,7 @@
 spotify-ripper |Version|
 ========================
 A fork of
-`spotify-ripper <https://github.com/jrnewell/spotify-ripper`__ that uses `spotipy <https://github.com/plamere/spotipy>`__ for WebAPI integration and playlist updating
+`spotify-ripper <https://github.com/jrnewell/spotify-ripper>`__ that uses a fork of `spotipy <https://github.com/plamere/spotipy>`__ for WebAPI integration and playlist updating
 
 ***IMPORTANT*** Due to the playlist retreival method of libspotify (pyspotify library) no longer functioning, a spotify web api account is now required for playlist ripping and emptying
                 please read the section below "Remove From Playlist Option" for instructions and tips on setting up a web api client and generating a token
