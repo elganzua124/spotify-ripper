@@ -340,14 +340,14 @@ In order to use the Spotify Web API, you must go through a few steps
 
 .. code:: python
 
-    credentials = ['your client_id', 'your client_secret']
+    credentials = ['client_id', 'client_secret']
 
 Or you can export the web api credentials in your unix shell by issuing this commands:
 
 .. code:: bash
 
-    $ export SPOTIPY_CLIENT_ID='your client_id'
-    $ export SPOTIPY_CLIENT_SECRET='your client_secret'
+    $ export SPOTIPY_CLIENT_ID='client_id'
+    $ export SPOTIPY_CLIENT_SECRET='client_secret'
 
 5: If you have been using spotify-ripper for a while, it probably doesn't have accurate cache data on your playlists anymore. Find your ".spotify-ripper" folder, most likely in your home directory, and delete your "Users" folder. It will be regenerated on the next run.
 
