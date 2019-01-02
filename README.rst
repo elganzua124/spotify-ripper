@@ -333,9 +333,9 @@ In order to use the Spotify Web API, you must go through a few steps
 
 2: Generate and store your ``client_id`` and ``client_secret``, you'll need these later
 
-3: Add http://localhost:1025 to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. If you want to use a different port, ensure it's higher than 1024 and put that number in the variable localhost_port in ripper.py
+3: Add http://localhost:1025 to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. If you want to use a different port, ensure it's higher than 1024 and put that number in the variable ``localhost_port`` in ``ripper.py``
 
-3: Install this package if you haven't already and navigate to it in the python version you installed it with (I would  suggest Python 3 at least) For example, my installation directory is "/usr/local/lib/python3.4/dist-packages/spotify_ripper/"
+3: Install this package if you haven't already and navigate to it in the python version you installed it with (I would  suggest Python 3 at least) For example, my installation directory is "``~/.local/lib/python3.6/site-packages/spotify_ripper``"
    
 4: Export the web api credentials in your unix shell by issuing this commands:
 
@@ -348,9 +348,7 @@ In order to use the Spotify Web API, you must go through a few steps
 
 Remove From Playlist Option
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If you followed the previous steps, when you run spotify-ripper with the --remove-from-playlist command for the first time, your web browser will pop up and you will read "You can close this tab". Done, a token was generated and cached.
-
-If you followed all of these steps correctly, spotify-ripper will completely empty the playlist you are ripping from when it finishes.
+If you followed the previous steps, when you run spotify-ripper with the ``--remove-from-playlist`` command for the first time, your web browser will pop up and you will read "You can close this tab". Done, a token was generated and cached, spotify-ripper will completely empty the playlist you are ripping from when it finishes.
 
 Installation
 ------------
