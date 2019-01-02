@@ -1,11 +1,10 @@
 spotify-ripper |Version|
 ========================
 A fork of
-`spotify-ripper <https://github.com/jrnewell/spotify-ripper>`__ that uses a fork of `spotipy <https://github.com/plamere/spotipy>`__ for WebAPI integration and playlist updating
+`spotify-ripper <https://github.com/jrnewell/spotify-ripper>`__ that uses a fork of `spotipy <https://github.com/plamere/spotipy>`__ for WebAPI integration and playlist updating.
 
-***IMPORTANT*** Due to the playlist retrieval method of libspotify (pyspotify library) no longer functioning, a spotify web api account is now required
-                please read the section below "Web Api Credentials" for instructions and tips on setting up a web api client
-                
+**IMPORTANT** Due to the playlist retrieval method of libspotify (pyspotify library) no longer functioning, a spotify web api account is now required. Please read the section below "Web Api Credentials" for instructions and tips on setting up a web api client and the section "Remove From Playlist Option" for generating a token.
+
 Spotify-ripper is a small ripper script for Spotify that rips Spotify
 URIs to audio files and includes ID3 tags and cover art.  By default spotify-ripper will encode to MP3 files, but includes the ability to rip to WAV, FLAC, Ogg Vorbis, Opus, AAC, and MP4/M4A.
 
@@ -334,15 +333,11 @@ In order to use the Spotify Web API, you must go through a few steps
 
 2: Generate and store your ``client_id`` and ``client_secret``, you'll need these later
 
+3: Add http://localhost:1025 to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. If you want to use a different port, ensure it's higher than 1024 and put that number in the variable localhost_port in ripper.py
+
 3: Install this package if you haven't already and navigate to it in the python version you installed it with (I would  suggest Python 3 at least) For example, my installation directory is "/usr/local/lib/python3.4/dist-packages/spotify_ripper/"
    
-4: open ``ripper.py`` in your favorite text editor. Add your ``client_id`` and ``client_secret`` between the single quotes next to the variable named ``credentials``:
-
-.. code:: python
-
-    credentials = ['client_id', 'client_secret']
-
-Or you can export the web api credentials in your unix shell by issuing this commands:
+4: Export the web api credentials in your unix shell by issuing this commands:
 
 .. code:: bash
 
@@ -350,6 +345,10 @@ Or you can export the web api credentials in your unix shell by issuing this com
     $ export SPOTIPY_CLIENT_SECRET='client_secret'
 
 5: If you have been using spotify-ripper for a while, it probably doesn't have accurate cache data on your playlists anymore. Find your ".spotify-ripper" folder, most likely in your home directory, and delete your "Users" folder. It will be regenerated on the next run.
+
+Remove From Playlist Option
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you followed the previous steps, when you run spotify-ripper with the --remove-from-playlist command for the first time, your web browser will pop up and you will read "You can close this tab". Done, a token was generated and cached.
 
 If you followed all of these steps correctly, spotify-ripper will completely empty the playlist you are ripping from when it finishes.
 
