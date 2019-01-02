@@ -329,13 +329,13 @@ Web Api Credentials
 ~~~~~~~~~~~~~~~~~~~
 In order to use the Spotify Web API, you must go through a few steps
 
+1: Install this package if you haven't already (I would  suggest Python 3 at least)
+
 1: Make an application at https://developer.spotify.com/my-applications/ name it whatever you like
 
 2: Generate and store your ``client_id`` and ``client_secret``, you'll need these later
 
-3: Add http://localhost:1025 to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. If you want to use a different port, ensure it's higher than 1024 and put that number in the variable ``localhost_port`` in ``ripper.py``
-
-3: Install this package if you haven't already and navigate to it in the python version you installed it with (I would  suggest Python 3 at least) For example, my installation directory is "``~/.local/lib/python3.6/site-packages/spotify_ripper``"
+3: Add http://localhost:1025 to your applications Redirect URI's, make sure to click the green "ADD" button to the right of the field before pressing SAVE. If you want to use a different port, navigate to the installation directory, mine is "``~/.local/lib/python3.6/site-packages/spotify_ripper``", ensure the port you choose it's higher than 1024 and put that number in the variable ``localhost_port`` in ``ripper.py``
    
 4: Export the web api credentials in your unix shell by issuing this commands:
 
