@@ -51,7 +51,7 @@ class Ripper(threading.Thread):
     wav_file = None
     rip_proc = None
     pipe = None
-    credentials = ['', ''] # put here your client_id, client_secret pair
+    localhost_port = 1025
     current_playlist = None
 
     login_success = False
@@ -91,7 +91,7 @@ class Ripper(threading.Thread):
         default_dir = default_settings_dir()
 
         self.post = PostActions(args, self)
-        self.web = WebAPI(args, *self.credentials)
+        self.web = WebAPI(args)
 
         proxy = os.environ.get('http_proxy')
         if proxy is not None:
@@ -433,7 +433,7 @@ class Ripper(threading.Thread):
             track = link.as_track()
             return iter([track])
         elif link.type == spotify.LinkType.PLAYLIST: #a_playlist
-            self.current_playlist = Current_playlist(self.session,uri)
+            self.current_playlist = Current_playlist(self.session,uri,self.localhost_port,args.remove_from_playlist)
             print('get playlist tracks')
             return iter(self.current_playlist.tracks)
         elif link.type == spotify.LinkType.ALBUM:

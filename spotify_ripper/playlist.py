@@ -5,43 +5,25 @@ from colorama import Fore, Style
 from spotify_ripper.utils import *
 import requests
 import json
-
+from spotipy.oauth2 import SpotifyClientCredentials
 from itertools import islice
 import csv
 import re
 
-client_id = ''
-client_secret = ''
-
-# client_id = os.environ["SPOTIPY_CLIENT_ID"] 
-# client_secret = os.environ["SPOTIPY_CLIENT_SECRET"]
-
-
 import abc
-from spotipy.oauth2 import SpotifyClientCredentials
 
 class Playlist(abc.ABC): # Needs refactoring
 
     def __init__(self,s,playlist_uri):
         self.session = s
         self.uri = playlist_uri
-        self.username = self.session.user.canonical_name
         self.id = self.uri.split(':')[-1]
-
-        def spotify_object():
-            client_credentials_manager = SpotifyClientCredentials(client_id, client_secret)
-            spotify_object = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-            spotify_object.trace = False
-            return spotify_object
-
-        self._sp = spotify_object()
-
-        self._playlist = self.__populate()
-        self.name = self._playlist['name']
+        self._sp = self.__spotify_object()
+        self.name = self.__get_name()
         self.tracks = self.__get_tracks()
 
     @abc.abstractmethod
-    def __populate(self): #cambiar nombre
+    def __get_name(self):
         pass
 
     @abc.abstractmethod
@@ -49,22 +31,40 @@ class Playlist(abc.ABC): # Needs refactoring
         pass
 
     @abc.abstractmethod
+    def __spotify_object(self):
+        pass
+
+    @abc.abstractmethod
     def can_remove_tracks(self):
         pass
 
+scope = 'playlist-modify-public playlist-modify-private playlist-read-collaborative'
+
 class Current_playlist(Playlist): # cambiar nombre, Mixed_playlist tal vez?
 
-    def __init__(self,s,playlist_uri):
+    def __init__(self,s,playlist_uri, localhost_port, remove_from_playlist=False): 
+        self._r = remove_from_playlist
+        self._port = localhost_port
         super().__init__(s,playlist_uri)
-        self._playlist = self._sp.playlist(self.id)
 
-    def _Playlist__populate(self):
-        return self._sp.playlist(self.id)
+    def _Playlist__spotify_object(self):
+        if self._r:
+            token = util.prompt_for_user_token(self.session.user.canonical_name, scope, self._port)
+            spotify_object = spotipy.Spotify(auth=token)
+        else: # we dont need a token
+            credentials = SpotifyClientCredentials()
+            spotify_object = spotipy.Spotify(client_credentials_manager=credentials)
+
+        spotify_object.trace = False
+        return spotify_object
+
+    def _Playlist__get_name(self):
+        playlist = self._sp.playlist(self.id)
+        return playlist['name']
 
     def _Playlist__get_tracks(self):
         print('Getting Results')
-        results = self._sp.playlist(self.id, fields="tracks")
-        "usar playlist_tracks"
+        results = self._sp.playlist(self.id, fields="tracks") #usar playlist_tracks"
 
         tracks = results['tracks'].get('items')
 
@@ -79,9 +79,9 @@ class Current_playlist(Playlist): # cambiar nombre, Mixed_playlist tal vez?
         return track_objects
 
     def can_remove_tracks(self):
-
+        playlist = self._sp.playlist(self.id) 
         def owner_display_name():
-            owner = self._playlist['owner']
+            owner = playlist['owner']
             if owner['display_name'] == None:
                 return str(owner['id'])
             return str(owner['display_name'])
@@ -91,17 +91,26 @@ class Current_playlist(Playlist): # cambiar nombre, Mixed_playlist tal vez?
         return False
 
     def remove_tracks(self,track_ids):
-        results = self._sp.user_playlist_remove_all_occurrences_of_tracks(self.id, track_ids)
+        if token:
+            results = self._sp.user_playlist_remove_all_occurrences_of_tracks(self.id, track_ids)
+        else:
+            token = util.prompt_for_user_token(username, scope)
 
 
 class Album(Playlist): # an_album_playlist
 
     def __init__(self,s,playlist_uri):
         super().__init__(s,playlist_uri)
-        self._playlist = self._sp.album(self.id)
 
-    def _Playlist__populate(self):
-        return self._sp.album(self.id)
+    def _Playlist__get_name(self):
+        playlist = self._sp.album(self.id)
+        return playlist['name']
+
+    def _Playlist__spotify_object(self):
+        client_credentials_manager = SpotifyClientCredentials()
+        spotify_object = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+        spotify_object.trace = False
+        return spotify_object
 
     def can_remove_tracks(self):
         return False
@@ -131,6 +140,7 @@ class Album(Playlist): # an_album_playlist
 class Chart_playlist(Playlist):
 
     def __init__(self,s,playlist_uri):
+        super().__init__(s,playlist_uri)
 
         self._valid_metrics = {"regional", "viral"}
         self._valid_regions = {
@@ -195,13 +205,9 @@ class Chart_playlist(Playlist):
         }
         self._valid_windows = {"daily", "weekly"}
         self.__sanity(playlist_uri)
-        self.uri_tokens = playlist_uri.split(':')
-        self.session = s
-        self.uri = playlist_uri
-        self.username = self.session.user.canonical_name
-        self.id = self.uri.split(':')[-1]
-        self.name = self.__get_name()
-        self.tracks = self._Playlist__get_tracks()
+
+    def _Playlist__spotify_object():
+        return None
 
     def __sanity(self,playlist_uri):
     # some sanity checking
@@ -239,16 +245,13 @@ class Chart_playlist(Playlist):
             raise ValueError(Fore.RED + "The chart URI doesn't follow the pattern "
                   "spotify:charts:metric:region:time_window:date" + Fore.RED)
 
-    def __get_name(self):
+    def _Playlist__get_name(self):
 
         metrics,region_code,time_window,from_date = self.uri_tokens[-4:]
         l = [time_window, self._valid_regions[region_code], \
             ("Top 200" if metrics == "regional" else "Viral 50")]
 
         return ' '.join(l)
-
-    def _Playlist__populate(self):
-        pass
 
     def can_remove_tracks(self):
         return False

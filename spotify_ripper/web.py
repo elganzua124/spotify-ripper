@@ -14,11 +14,11 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 client_credentials_sp = None
 
-def init_client_credentials_sp(client_id, client_secret):
+def init_client_credentials_sp():
 
     global client_credentials_sp
     if client_credentials_sp is None:
-        client_credentials_manager = SpotifyClientCredentials(client_id, client_secret)
+        client_credentials_manager = SpotifyClientCredentials()
         client_credentials_sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
         client_credentials_sp.trace = False
 
@@ -26,7 +26,7 @@ def init_client_credentials_sp(client_id, client_secret):
 
 class WebAPI(object):
 
-    def __init__(self, args, client_id, client_secret):
+    def __init__(self, args):
         self.args = args
         self.cache = {
             "albums_with_filter": {},
@@ -46,7 +46,7 @@ class WebAPI(object):
         print(Fore.GREEN + "Attempting to retrieve " + msg +
               " from Spotify's Web API" + Fore.RESET)
         print(Fore.CYAN + url + Fore.RESET)
-        sp = init_client_credentials_sp(client_id, client_secret)
+        sp = init_client_credentials_sp()
         try:
             res = sp._get(url)
         except spotify.SpotifyException as e:
