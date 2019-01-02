@@ -50,7 +50,7 @@ Features
 
 -  globally installs ripper script using pip
 
--  Python 2.7.x and 3.4.x compatible.  Python 3 will occasionally throw a ``NameError: name '_lock' is not defined`` exception at the end of the script due to an `upstream bug <https://github.com/mopidy/pyspotify/issues/133>`__ in ``pyspotify``.
+-  Python 2.7.x and 3.4.x compatible
 
 -  use a config file to specify common command-line options
 
