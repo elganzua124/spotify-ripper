@@ -332,7 +332,7 @@ In order to use the Spotify Web API, you must go through a few steps
 
 1: Make an application at https://developer.spotify.com/my-applications/ name it whatever you like
 
-2: Generate and store you client_id and client_secret, you'll need these later
+2: Generate and store your ``client_id`` and ``client_secret``, you'll need these later
 
 3: Install this package if you haven't already and navigate to it in the python version you installed it with (I would  suggest Python 3 at least) For example, my installation directory is "/usr/local/lib/python3.4/dist-packages/spotify_ripper/"
    
