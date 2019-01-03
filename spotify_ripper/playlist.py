@@ -140,8 +140,8 @@ class Album(Playlist): # an_album_playlist
 class Chart_playlist(Playlist):
 
     def __init__(self,s,playlist_uri):
-        super().__init__(s,playlist_uri)
-
+        # spotify:charts:metric:region:time_window:date
+        self.uri_tokens = playlist_uri.split(':')
         self._valid_metrics = {"regional", "viral"}
         self._valid_regions = {
             "global": "Global",
@@ -204,12 +204,15 @@ class Chart_playlist(Playlist):
             "uy": "Uruguay"
         }
         self._valid_windows = {"daily", "weekly"}
-        self.__sanity(playlist_uri)
 
-    def _Playlist__spotify_object():
+        super().__init__(s,playlist_uri)
+
+        self.__sanity()
+
+    def _Playlist__spotify_object(self):
         return None
 
-    def __sanity(self,playlist_uri):
+    def __sanity(self):
     # some sanity checking
 
         def sanity_check(val, valid_set):
@@ -233,14 +236,11 @@ class Chart_playlist(Playlist):
                 return False
             return True
 
-        # spotify:charts:metric:region:time_window:date
-        uri_tokens = playlist_uri.split(':')
-
-        check_results = len(uri_tokens) == 6 and \
-            sanity_check(uri_tokens[2], self._valid_metrics) and \
-            sanity_check(uri_tokens[3], self._valid_regions) and \
-            sanity_check(uri_tokens[4], self._valid_windows) and \
-            sanity_check_date(uri_tokens[5])
+        check_results = len(self.uri_tokens) == 6 and \
+            sanity_check(self.uri_tokens[2], self._valid_metrics) and \
+            sanity_check(self.uri_tokens[3], self._valid_regions) and \
+            sanity_check(self.uri_tokens[4], self._valid_windows) and \
+            sanity_check_date(self.uri_tokens[5])
         if not check_results:
             raise ValueError(Fore.RED + "The chart URI doesn't follow the pattern "
                   "spotify:charts:metric:region:time_window:date" + Fore.RED)
