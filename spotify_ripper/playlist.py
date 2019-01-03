@@ -91,10 +91,7 @@ class Current_playlist(Playlist): # cambiar nombre, Mixed_playlist tal vez?
         return False
 
     def remove_tracks(self,track_ids):
-        if token:
-            results = self._sp.user_playlist_remove_all_occurrences_of_tracks(self.id, track_ids)
-        else:
-            token = util.prompt_for_user_token(username, scope)
+        self._sp.user_playlist_remove_all_occurrences_of_tracks(self.id, track_ids)
 
 
 class Album(Playlist): # an_album_playlist
