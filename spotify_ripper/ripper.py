@@ -184,25 +184,6 @@ class Ripper(threading.Thread):
 
     #devuelve lista de objetos tracks
 
-    # TODO: agregar artist a la logica de playlist
-    def get_tracks_from_uri(self, uri):
-        args = self.args
-        self.current_playlist = None
-
-        if isinstance(uri, list):
-            return uri
-        else:
-            """if (uri.startswith("spotify:artist:") and
-                    (args.artist_album_type is not None or
-                     args.artist_album_market is not None)):""" #revisar
-            if (uri.startswith("spotify:artist:")):
-                album_uris = self.web.get_artist_albums(uri.split(':')[2])
-                return itertools.chain(
-                    *[self.load_link(album_uri) for
-                       album_uri in album_uris])
-            else: # aca entran los playlists, es decir que si no entra aca, current_playlist queda en None
-                    return self.load_link(uri)
-
     def run(self):
         args = self.args
 
@@ -414,8 +395,11 @@ class Ripper(threading.Thread):
             wait_for_resume(resume_time)
             self.play_token_resume.clear()
 
-    def load_link(self, uri):
+    def get_tracks_from_uri(self, uri):
 
+        """if isinstance(uri, list):
+            return uri
+        else:"""
         # ignore if the uri is just blank (e.g. from a file)
         if not uri:
             return iter([])
@@ -439,12 +423,21 @@ class Ripper(threading.Thread):
             self.current_playlist = Album(self.session,uri)
             print('get album tracks')
             return iter(self.current_playlist.tracks)
-        elif link.type == spotify.LinkType.ARTIST:
+            """elif link.type == spotify.LinkType.ARTIST:
             artist = link.as_artist()
             artist_browser = artist.browse()
             print('Loading artist browser...')
             artist_browser.load(args.timeout)
-            return iter(artist_browser.tracks)
+            return iter(artist_browser.tracks)"""
+            """elif (uri.startswith("spotify:artist:") and
+                    (args.artist_album_type is not None or
+                     args.artist_album_market is not None)):""" #revisar
+        elif (uri.startswith("spotify:artist:")):
+            album_uris = []
+            album_uris = self.web.get_artist_albums(uri.split(':')[2])
+            return itertools.chain(
+                *[self.get_tracks_from_uri(album_uri) for
+                   album_uri in album_uris])
         return iter([])
 
     def search_query(self, query):

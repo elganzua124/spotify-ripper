@@ -73,12 +73,12 @@ class WebAPI(object):
     def charts_url(self, url_path):
         return 'https://spotifycharts.com/' + url_path
 
-    # excludes 'appears on' albums for artist
     def get_artist_albums(self, artist_id):
         args = self.args
 
         sp = init_client_credentials_sp()
 
+        albums = []
         album_uris = []
         results = sp.artist_albums(artist_id, args.artist_album_type, args.artist_album_market)
         albums.extend(results['items'])
