@@ -77,9 +77,8 @@ class WebAPI(object):
     def get_artist_albums(self, artist_id):
         args = self.args
 
-        sp=init_client_credentials_sp()
+        sp = init_client_credentials_sp()
 
-        albums = []
         album_uris = []
         results = sp.artist_albums(artist_id, args.artist_album_type, args.artist_album_market)
         albums.extend(results['items'])
