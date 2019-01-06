@@ -29,7 +29,7 @@ class WebAPI(object):
     def __init__(self, args):
         self.args = args
         self.cache = {
-            "albums_with_filter": {},
+            "artist_albums": {},
             "artists_on_album": {},
             "genres": {},
             "charts": {},
@@ -74,54 +74,28 @@ class WebAPI(object):
         return 'https://spotifycharts.com/' + url_path
 
     # excludes 'appears on' albums for artist
-    def get_albums_with_filter(self, uri):
+    def get_artist_albums(self, artist_id):
         args = self.args
 
-        album_type = ('&album_type=' + args.artist_album_type) \
-            if args.artist_album_type is not None else ""
+        sp=init_client_credentials_sp()
 
-        market = ('&market=' + args.artist_album_market) \
-            if args.artist_album_market is not None else ""
-
-        def get_albums_json(offset):
-            url = self.api_url(
-                    'artists/' + uri_tokens[2] +
-                    '/albums/?=' + album_type + market +
-                    '&limit=50&offset=' + str(offset))
-            return self.request_json(url, "albums")
+        albums = []
+        album_uris = []
+        results = sp.artist_albums(artist_id, args.artist_album_type, args.artist_album_market)
+        albums.extend(results['items'])
+        while results['next']:
+            results = sp.next(results)
+            albums.extend(results['items'])
 
         # check for cached result
-        cached_result = self.get_cached_result("albums_with_filter", uri)
+        cached_result = self.get_cached_result("artist_albums", artist_id)
         if cached_result is not None:
             return cached_result
 
-        # extract artist id from uri
-        uri_tokens = uri.split(':')
-        if len(uri_tokens) != 3:
-            return []
+        album_uris += [album['uri'] for album in albums]
 
-        # it is possible we won't get all the albums on the first request
-        offset = 0
-        album_uris = []
-        total = None
-        while total is None or offset < total:
-            try:
-                # rate limit if not first request
-                if total is None:
-                    time.sleep(1.0)
-                albums = get_albums_json(offset)
-                if albums is None:
-                    break
-
-                # extract album URIs
-                album_uris += [album['uri'] for album in albums['items']]
-                offset = len(album_uris)
-                if total is None:
-                    total = albums['total']
-            except KeyError as e:
-                break
         print(str(len(album_uris)) + " albums found")
-        self.cache_result("albums_with_filter", uri, album_uris)
+        self.cache_result("artist_albums", artist_id, album_uris)
         return album_uris
 
     def get_artists_on_album(self, uri):

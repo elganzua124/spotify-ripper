@@ -196,8 +196,7 @@ class Ripper(threading.Thread):
                     (args.artist_album_type is not None or
                      args.artist_album_market is not None)):""" #revisar
             if (uri.startswith("spotify:artist:")):
-                print("acap")
-                album_uris = self.web.get_albums_with_filter(uri)
+                album_uris = self.web.get_artist_albums(uri.split(':')[2])
                 return itertools.chain(
                     *[self.load_link(album_uri) for
                        album_uri in album_uris])
