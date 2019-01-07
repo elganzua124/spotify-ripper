@@ -412,10 +412,10 @@ class Ripper(threading.Thread):
         args = self.args
         link = self.session.get_link(uri)
 
-        if link.type == spotify.LinkType.TRACK: #single_track_playlist
+        if link.type == spotify.LinkType.TRACK:
             track = link.as_track()
             return iter([track])
-        elif link.type == spotify.LinkType.PLAYLIST: #a_playlist
+        elif link.type == spotify.LinkType.PLAYLIST:
             self.current_playlist = Current_playlist(self.session,uri,self.localhost_port,args.remove_from_playlist)
             print('get playlist tracks')
             return iter(self.current_playlist.tracks)
@@ -423,21 +423,18 @@ class Ripper(threading.Thread):
             self.current_playlist = Album(self.session,uri)
             print('get album tracks')
             return iter(self.current_playlist.tracks)
-            """elif link.type == spotify.LinkType.ARTIST:
-            artist = link.as_artist()
-            artist_browser = artist.browse()
-            print('Loading artist browser...')
-            artist_browser.load(args.timeout)
-            return iter(artist_browser.tracks)"""
-            """elif (uri.startswith("spotify:artist:") and
-                    (args.artist_album_type is not None or
-                     args.artist_album_market is not None)):""" #revisar
         elif (uri.startswith("spotify:artist:")):
             album_uris = []
             album_uris = self.web.get_artist_albums(uri.split(':')[2])
             return itertools.chain(
                 *[self.get_tracks_from_uri(album_uri) for
                    album_uri in album_uris])
+        elif link.type == spotify.LinkType.ARTIST:   # no entra, se prefiere al elif de arriba que usa web api
+            artist = link.as_artist()
+            artist_browser = artist.browse()
+            print('Loading artist browser...')
+            artist_browser.load(args.timeout)
+            return iter(artist_browser.tracks)
         return iter([])
 
     def search_query(self, query):

@@ -98,9 +98,6 @@ class WebAPI(object):
         return album_uris
 
     def get_artists_on_album(self, uri):
-        def get_album_json(album_id):
-            url = self.api_url('albums/' + album_id)
-            return self.request_json(url, "album")
 
         # check for cached result
         cached_result = self.get_cached_result("artists_on_album", uri)
@@ -111,8 +108,8 @@ class WebAPI(object):
         uri_tokens = uri.split(':')
         if len(uri_tokens) != 3:
             return None
-
-        album = get_album_json(uri_tokens[2])
+        sp = init_client_credentials_sp()
+        album = sp.album(uri_tokens[2])
         if album is None:
             return None
 
