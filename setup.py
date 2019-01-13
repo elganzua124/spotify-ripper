@@ -52,14 +52,14 @@ setup(
     ],
 
     # Metadata
-    author='James Newell',
-    author_email='james.newell@gmail.com',
+    author='Francisco Herrera',
+    author_email='fran.herrera124@gmail.com',
     description='a small ripper for Spotify that rips Spotify URIs '
                 'to audio files',
     license='MIT',
     keywords="spotify ripper mp3 ogg vorbis flac opus acc mp4 m4a",
-    url='https://github.com/jrnewell/spotify-ripper',
-    download_url='https://github.com/jrnewell/spotify-ripper/tarball/2.10.5',
+    url='https://github.com/elganzua124/spotify-ripper',
+    download_url='https://github.com/elganzua124/spotify-ripper/tarball/2.10.5',
     classifiers=[
         'Topic :: Multimedia :: Sound/Audio',
         'Topic :: Multimedia :: Sound/Audio :: Capture/Recording',
