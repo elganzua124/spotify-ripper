@@ -39,12 +39,12 @@ setup(
     },
 
     dependency_links=[
-        'https://github.com/elganzua124/spotipy#egg=spotipy'
+        'git+https://github.com/elganzua124/spotipy.git#egg=spotipy-2.0.2'
     ],
     
     # Requirements
     install_requires=[
-        'spotipy'
+        'spotipy==2.0.2'
         'pyspotify==2.0.5',
         'colorama==0.3.3',
         'mutagen==1.30',
