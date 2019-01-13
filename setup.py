@@ -49,7 +49,7 @@ setup(
     ],
     
     dependency_links=[
-        'git+https://github.com/elganzua124/spotipy#egg=spotipy-2.0.1'
+        'https://github.com/elganzua124/spotipy#egg=spotipy-2.0.1'
     ],
 
     # Metadata
