@@ -44,7 +44,7 @@ setup(
     
     # Requirements
     install_requires=[
-        'spotipy==2.0.2'
+        'spotipy==2.0.2',
         'pyspotify==2.0.5',
         'colorama==0.3.3',
         'mutagen==1.30',
