@@ -45,11 +45,11 @@ setup(
         'mutagen==1.30',
         'requests>=2.3.0',
         'schedule>=0.3.1',
-        'spotipy==2.0.1'
+        'spotipy==2.0.2'
     ],
     
     dependency_links=[
-        'https://github.com/elganzua124/spotipy#egg=spotipy-2.0.1'
+        'https://github.com/elganzua124/spotipy#egg=spotipy-2.0.2'
     ],
 
     # Metadata
