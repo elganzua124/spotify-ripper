@@ -39,7 +39,7 @@ setup(
     },
 
     dependency_links=[
-        'git+https://github.com/elganzua124/spotipy.git#egg=spotipy-2.0.3'
+        'https://codeload.github.com/elganzua124/spotipy/zip/master#egg=spotipy-2.0.3'
     ],
     
     # Requirements
