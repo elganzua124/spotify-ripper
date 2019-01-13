@@ -40,7 +40,7 @@ setup(
     
     # Requirements
     install_requires=[
-        'spotipy @ git+https://github.com/elganzua124/spotipy@2.0.1+elganzua124#egg=spotipy-2.0.1+elganzua124',
+        'spotipy @ git+https://github.com/elganzua124/spotipy#egg=spotipy-2.0.1+elganzua124',
         'pyspotify==2.0.5',
         'colorama==0.3.3',
         'mutagen==1.30',
