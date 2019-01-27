@@ -102,10 +102,11 @@ def main(prog_args=sys.argv[1:]):
     # the rest of the arguments (which can overwrite the options in the
     # config file)
 
-    # to avoid unintended root execution
+    # warning about root execution
     if os.getuid() == 0:
-        print("spotify-ripper: error: please run this program as unprivileged user")
-        sys.exit(1)
+        print("spotify-ripper: warning: running as root")
+        print("now you have to run this program always as root to avoid core dumps")
+        print("or change permission of folder .spotify-ripper")
 
     settings_parser = argparse.ArgumentParser(add_help=False)
     settings_parser.add_argument(
